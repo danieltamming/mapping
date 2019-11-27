@@ -1,6 +1,8 @@
 # mapping
+Graphs of and helpful algorithms involving Toronto Transit Commision (TTC) routes
+
 ### Idea
-Imagine Jack and Jill have plans to go to Bill's house. Jack has a vehicle and Jill does not. Jack and Jill agree that Jill will take the TTC (Toronto's public transit) to a place where it is convenient for Jack to pick Jill up. **What is the optimal pickup location**? 
+Imagine Jack and Jill have plans to go to Bill's house. Jack has a vehicle and Jill does not. Jack and Jill agree that Jill will take the TTC to a place where it is convenient for Jack to pick Jill up. **What is the optimal pickup location**? 
 
 What if Jack is willing to go out of his way in order to save Jill time? What if we decide Jill's time is twice as valuable as Jack's time, or vice versa? What if Jill is willing to walk a certain distance? How many times is Jill wishing to get off one bus (or subway or streetcar) and get onto another? We'd like to find the optimal meetup location given these (and possibly other) parameters. 
 
@@ -32,4 +34,5 @@ The _setup.sh_ file downloads the data and creates a virtual environment.
  - add logic to the algorithm to allow user to add a weighting of how much to value the driver's vs the transit user's time, or minimize distance traveled by car
 
 ### Figures
-![alt text](figures/Figure_1.png)
+![](figures/Figure_1.png)
+*A graph of all TTC routes and stops. Generated using networkx.*
