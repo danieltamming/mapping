@@ -12,7 +12,7 @@ import googlemaps
 import polyline
 import networkx as nx
 
-from keys import API_KEY
+if os.path.exists('keys.py'): from keys import API_KEY
 
 def get_route_info(verbose=False):
 	temp_file = 'data/example.pickle'
