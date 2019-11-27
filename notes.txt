@@ -1,0 +1,23 @@
+Transit Directions:
+
+Use given:
+ - stop_times.txt: trip_id, stop_id, (arrival_time ?)
+ - stops.txt:      stop_id, stop_lat, stop_lon (stop_name ?)
+ - trips.txt:      trip_id, route_id
+
+Create:
+ - my_df: route_id, stop_id, stop_lat, stop_lon, time
+ - by getting trips closest to noon and taking arrival_times from them
+
+Graph:
+ - Nodes: stop_id, pos
+ - Edges: travel_time, [(route_id, direction_id)]
+
+
+Notes:
+ - in stop_times, arrival_time == departure_time for all entries
+
+TODO:
+ - get trip and route name, compare
+ - stop ignoring stops that don't appear on mode trips. Right now only using 9155/9691
+ - USE DIRECTION ID
