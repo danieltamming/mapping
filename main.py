@@ -15,7 +15,7 @@ import networkx as nx
 from keys import API_KEY
 
 def get_route_info(verbose=False):
-	temp_file = 'example.pickle'
+	temp_file = 'data/example.pickle'
 	gmaps = googlemaps.Client(key=API_KEY)
 	A = '443 Arlington Ave, York, ON M6C 3A2'
 	B = 'Pearson Airport Terminal 1, Mississauga, ON'
@@ -76,7 +76,7 @@ def to_datetime(s):
 
 def get_df(saving=True):
 	folder = 'OpenData_TTC_Schedules/'
-	my_df_filepath = 'my_df.csv'
+	my_df_filepath = 'data/my_df.csv'
 	if saving and os.path.exists(my_df_filepath):
 		print('Extracting my_df from file.')
 		df = pd.read_csv(my_df_filepath)
@@ -123,7 +123,8 @@ def get_df(saving=True):
 	if saving: df2.to_csv(my_df_filepath)
 	return df2
 
-def create_network(my_df):
+def create_graph(my_df):
+	print('Constructing graph.')
 	DG = nx.DiGraph()
 	route_direction_pairs = set(
 		tuple(L) for L in my_df[['route_id', 'direction_id']].values.tolist())
@@ -157,9 +158,9 @@ def create_network(my_df):
 	return DG
 
 if __name__ == "__main__":
-	result, points, polies = get_route_info()
+	# result, points, polies = get_route_info()
 	my_df = get_df(saving=True)
-	DG = create_network(my_df)
+	DG = create_graph(my_df)
 	exit()
 	
 	lat, lon = 43.686298, -79.454210
