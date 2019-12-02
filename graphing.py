@@ -8,6 +8,7 @@ import networkx as nx
 from networkx.readwrite.gpickle import read_gpickle, write_gpickle
 
 from dataframe import get_stops_within
+from utils import get_travel_time
 
 def my_add_node(DG, stop_id, stop_lon, stop_lat, wait_time=7*60):
 	'''
@@ -31,16 +32,21 @@ def add_edges_between_stop_ids(my_df, DG, stop_A, stop_B, wait_time):
 	Each stop_id can have multiple nodes, so add edges between all 
 	pairs of nodes between two stop_ids
 	'''
+	A_coords = my_df[my_df['stop_id'] == stop_A][
+		['stop_lat', 'stop_lon']].drop_duplicates().values[0]
+	B_coords = my_df[my_df['stop_id'] == stop_B][
+		['stop_lat', 'stop_lon']].drop_duplicates().values[0]
+	total_time = wait_time + get_travel_time(A_coords, B_coords)
 	i = 0
 	while (stop_A, i) in DG.nodes:
 		j = 0
 		while (stop_B, j) in DG.nodes:
 			if not DG.has_edge((stop_A, i), (stop_B, j)):
 				DG.add_edge((stop_A, i), (stop_B, j), 
-							weight=wait_time, path=(-1, -1))
+							weight=total_time, path=(-1, -1))
 			if not DG.has_edge((stop_B, j), (stop_A, i)):
 				DG.add_edge((stop_B, j), (stop_A, i), 
-							weight=wait_time, path=(-1, -1))
+							weight=total_time, path=(-1, -1))
 			j += 1
 		i += 1
 
@@ -54,10 +60,14 @@ def add_walkable(my_df, DG, wait_time=7*60, max_dist=0.1):
 		close_stop_ids = get_stops_within(my_df, stop_id, max_dist)
 		for near_id in close_stop_ids:
 			if near_id != stop_id:
-				add_edges_between_stop_ids(my_df, DG, stop_id, near_id, wait_time)
+				add_edges_between_stop_ids(my_df, DG, stop_id, 
+										   near_id, wait_time)
 	return DG
 
 def set_wait_time(DG, wait_time):
+	'''
+	TODO update to add walk time
+	'''
 	for edge in DG.edges:
 		if DG.edges[edge]['path'] == (-1, -1):
 			if DG.edges[edge]['weight'] == wait_time:

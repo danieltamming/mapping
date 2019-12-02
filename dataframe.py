@@ -10,19 +10,26 @@ from scipy.spatial.distance import cdist
 def get_closest_stops(my_df, coords, k=1):
 	'''
 	Find the k nearest stop_ids that have unique route_ids
-	Return stop_ids, route_id, direction_id
+	Returns stop_ids, route_id, direction_id
 	'''
 	lat, lon = coords
-	order = cdist([[lat, lon]], 
+	# fast way to get order approximated by euclidean distance
+	approx_order = cdist([[lat, lon]], 
 					my_df[['stop_lat', 'stop_lon']]).argsort()[0,:]
+	# assume k closest points will be in first 10*k indices of approx
+	approx_df = my_df.iloc[approx_order[:10*k], :]
+	order = np.apply_along_axis(
+		lambda row: geopy.distance.distance(coords, row).km, 1, 
+		approx_df[['stop_lat', 'stop_lon']].values).argsort()
 	# order will include indices of rows with same stop_id, different route
 	# and direction
+	ordered_df = approx_df.iloc[order, :][
+		['stop_id', 'route_id', 'direction_id']].values
 	lines_seen = set()
 	closest_stop_ids = []
-	for i in order:
-		row = my_df.iloc[i][['stop_id', 'route_id', 'direction_id']].values
-		stop_id, route_id, direction_id = row
-		if (route_id, direction_id) not in lines_seen:
+	for stop_id, route_id, direction_id in ordered_df:
+		if ((route_id, direction_id) not in lines_seen 
+				and stop_id not in closest_stop_ids):
 			closest_stop_ids.append(stop_id)
 			lines_seen.add((route_id, direction_id))
 		if len(closest_stop_ids) >= k:
