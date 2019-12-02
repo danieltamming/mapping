@@ -17,12 +17,14 @@ class Path:
 		return sum([seg['travel_time'] for seg in self.segments])
 
 	def _get_start_walk_segment(self, path):
-		if self.DG.edges[(path[0], path[1])]['path'] != (-1, -1):
-			return path, None
-		seg = {'start' : path[0], 'line' : (-1, -1), 'travel_time' : 0}
+		temp_edge_walk_time = sum(
+			self.DG.edges[(path[idx],path[idx+1])]['weight'] for idx in [0,1])
+		path = path[2:]
+		seg = {'start' : -1, 'line' : (-1, -1), 
+			   'travel_time' : temp_edge_walk_time}
 		while (len(path) >= 2 
 				and self.DG.edges[(path[0], path[1])]['path'] == (-1, -1)):
-			seg['travel_time'] += (self.DG.edges[(path[0], path[1])]['weight']
+			seg['travel_time'] += (self.DG.edges[(path[0], path[1])]['weight'] 
 								   - self.wait_time)
 			assert seg['travel_time'] >= 0
 			path = path[1:]
@@ -31,10 +33,11 @@ class Path:
 		return path, seg
 
 	def _get_end_walk_segment(self, path):
-		if self.DG.edges[(path[0], path[1])]['path'] != (-1, -1):
-			return path, None
+		temp_edge_walk_time = sum(
+			self.DG.edges[path[idx-1],path[idx]]['weight'] for idx in [-1,-2])
+		path = path[:-2]
 		idx = len(path) - 2
-		seg = {'end' : -1, 'line' : (-1, -1), 'travel_time' : 0}
+		seg = {'end' : -1, 'line' : (-1, -1), 'travel_time' : temp_edge_walk_time}
 		while self.DG.edges[(path[idx], path[idx+1])]['path'] == (-1, -1):
 			seg['travel_time'] += (self.DG.edges[(path[idx], path[idx+1])]['weight']
 								   - self.wait_time)
@@ -48,7 +51,7 @@ class Path:
 		segments = []
 		first_line = self.DG.edges[(path[0], path[1])]['path']
 		seg = {'start' : path[0], 'line' : first_line, 'travel_time' : 0}
-		prev_line = None
+		prev_line = -1
 		for edge in zip(path[1:-1], path[2:]):
 			line = self.DG.edges[edge]['path']
 			travel_time = self.DG.edges[edge]['weight']
@@ -82,9 +85,7 @@ class Path:
 		return segments
 
 	def print_instructions(self, stops, trip_names):
-		for seg in self.segments:
-			# print(seg)
-			# continue
+		for seg in self.segments[1:-1]:
 
 			start_stop_id = seg['start'][0]
 			start_stop_name = stops.loc[start_stop_id]['stop_name']
@@ -111,11 +112,13 @@ class Path:
 			print('and ride until: \n\t' + end_stop_name)
 			print('should take: \n\t' + str(round(seg['travel_time']/60, 2)) 
 				  + ' mins\n')
+			print('That\'s a total of {} mins.'.format(round(self.travel_time/60)))
 
 	def plot_route(self, stops):
-		nodes = set(self.path)
+		path = self.path[2:-2]
+		nodes = set(path)
 
-		edges = list(zip(self.path[:-1], self.path[1:]))
+		edges = list(zip(path[:-1], path[1:]))
 		sub_DG = subgraph_view(
 			self.DG, lambda n : n in nodes, lambda n1, n2 : (n1, n2) in edges)
 
