@@ -10,14 +10,14 @@ What if Jack is willing to go out of his way in order to save Jill time? What if
  - [x] Get google maps API key
  - [x] Download TTC route information
  - [x] Create graph of TTC routes
- - [ ] Create basic TTC navigation algorithm that tells users how to get from point A to point B
- - [ ] Create optimal meetup location finder that assumes Jill is willing to walk 1 minute between stops and Jack refuses to go out of his way
+ - [x] Create basic TTC navigation algorithm that tells users how to get from point A to point B
+ - [x] Create optimal meetup location finder that assumes Jill is willing to walk 1 minute between stops and Jack will not go more than one minute out of his way
  - [ ] Introduce more parameters
  - [ ] Introduce time constraints based on TTC schedule. Prior to this it assumes that each bus/streetcar/subway arrives after a constant number of minutes, an unrealistic but greatly simplifying assumption. 
 
 ### Notes
  - These algorithms will only work within range of the TTC
- - Until the final step the time that a TTC unit takes to get from A to B is incorporated, but the time that a TTC unit takes to pick up an individual at a stop is assumed to be constant. 
+ - Before completion of the final task, the time that a TTC unit takes to pick up an individual at a stop is assumed to be constant
 
 ### Getting Started
 ```
@@ -26,7 +26,7 @@ cd mapping
 source setup.sh
 python main.py
 ```
-The _setup.sh_ file downloads the data and creates a virtual environment. 
+The _setup.sh_ script downloads the data and creates a virtual environment. 
 
 ### TODO
  - make google maps api key mandatory, write brief guide to securing one and storing it
