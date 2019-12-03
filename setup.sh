@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 wget http://opendata.toronto.ca/TTC/routes/OpenData_TTC_Schedules.zip
 unzip OpenData_TTC_Schedules.zip -d OpenData_TTC_Schedules
@@ -7,7 +7,6 @@ virtualenv -p python3 env
 source env/bin/activate
 pip install -r requirements.txt
 mkdir data
-
-echo "Enter your Google Maps API key."
+printf "\nEnter your Google Maps API key.\n"
 read api_key
 echo "API_KEY=\"$api_key\"" > keys.py
