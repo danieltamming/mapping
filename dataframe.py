@@ -81,7 +81,7 @@ def get_df(saving=True):
 		df = pd.read_csv(my_df_filepath)
 		df['time'] = df['time'].map(lambda x : to_datetime(x).time())
 		return df
-	print('Constructing and saving dataframe.')
+	print('Constructing and saving dataframe. Should take a few moments.')
 	stop_times = pd.read_csv(
 		folder+'stop_times.txt').dropna(axis=1, how='all')
 	stops = pd.read_csv(folder+'stops.txt').dropna(axis=1, how='all')

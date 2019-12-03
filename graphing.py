@@ -10,6 +10,35 @@ from networkx.readwrite.gpickle import read_gpickle, write_gpickle
 from dataframe import get_stops_within
 from utils import get_travel_time
 
+
+def add_temp_stops(DG, stops, start_stop_ids, end_stop_ids, 
+				   start_coord, end_coord):
+	to_remove = ['temp start', 'temp end']
+	for stop_id_A in start_stop_ids:
+		nodes_A = [key for key in DG.nodes.keys() if key[0] == stop_id_A]
+		temp_node_A = (stop_id_A, -1)
+		for node_A in nodes_A:
+			DG.add_edge(temp_node_A, node_A, weight=0, path=(-1, -1))
+		stop_coord_A = stops.loc[stop_id_A][['stop_lat', 'stop_lon']].values
+		walk_time = get_travel_time(start_coord, stop_coord_A)
+		DG.add_edge('temp start', temp_node_A, 
+					weight=walk_time, path=(-1, -1))
+		to_remove.append(temp_node_A)
+	for stop_id_B in end_stop_ids:
+		nodes_B = [key for key in DG.nodes.keys() if key[0] == stop_id_B]
+		temp_node_B = (stop_id_B, -1)
+		for node_B in nodes_B:
+			DG.add_edge(node_B, temp_node_B, weight=0, path=(-1, -1))
+		stop_coord_B = stops.loc[stop_id_B][['stop_lat', 'stop_lon']].values
+		walk_time = get_travel_time(stop_coord_B, end_coord)
+		DG.add_edge(temp_node_B, 'temp end', weight=walk_time, path=(-1, -1))
+		to_remove.append(temp_node_B)
+	return to_remove
+
+def remove_temp_stops(DG, to_remove):
+	for node in to_remove:
+		DG.remove_node(node)
+
 def my_add_node(DG, stop_id, stop_lon, stop_lat, wait_time=7*60):
 	'''
 	Each stop_id can have multiple nodes that should be connected
@@ -64,19 +93,6 @@ def add_walkable(my_df, DG, wait_time=7*60, max_dist=0.1):
 										   near_id, wait_time)
 	return DG
 
-def set_wait_time(DG, wait_time):
-	'''
-	TODO update to add walk time
-	'''
-	for edge in DG.edges:
-		if DG.edges[edge]['path'] == (-1, -1):
-			if DG.edges[edge]['weight'] == wait_time:
-				# this wait_time already set
-				return DG
-			DG.edges[edge]['weight'] = wait_time
-	write_gpickle(DG, 'data/graph.pickle', pickle.HIGHEST_PROTOCOL)
-	return DG
-
 def construct_graph(my_df):
 	DG = nx.DiGraph()
 	route_direction_pairs = set(
@@ -103,7 +119,8 @@ def construct_graph(my_df):
 	return DG
 
 def show_graph(DG):
-	colors = ['g' if DG.edges[(u, v)]['path'] == (-1, -1) else 'b' for u, v in DG.edges]
+	colors = ['g' if DG.edges[(u, v)]['path'] == (-1, -1) 
+			  else 'b' for u, v in DG.edges]
 	nx.draw(DG, nx.get_node_attributes(DG, 'pos'), 
 			node_size=5, node_color='r', width=1, 
 			edge_color=colors, arrowsize=8, with_labels=False)
@@ -115,7 +132,7 @@ def get_graph(my_df, saving=True):
 	if saving and os.path.exists(graph_filename):
 		print('Loading graph from file.')
 		return read_gpickle(graph_filename)
-	print('Constructing and saving graph.')
+	print('Constructing and saving graph. Should take a few minutes.')
 	DG = construct_graph(my_df)
 	DG = add_walkable(my_df, DG)
 	if saving: write_gpickle(DG, graph_filename, pickle.HIGHEST_PROTOCOL)

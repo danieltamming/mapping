@@ -37,10 +37,11 @@ class Path:
 			self.DG.edges[path[idx-1],path[idx]]['weight'] for idx in [-1,-2])
 		path = path[:-2]
 		idx = len(path) - 2
-		seg = {'end' : -1, 'line' : (-1, -1), 'travel_time' : temp_edge_walk_time}
+		seg = {'end' : -1, 'line' : (-1, -1), 
+			   'travel_time' : temp_edge_walk_time}
 		while self.DG.edges[(path[idx], path[idx+1])]['path'] == (-1, -1):
-			seg['travel_time'] += (self.DG.edges[(path[idx], path[idx+1])]['weight']
-								   - self.wait_time)
+			weight = self.DG.edges[(path[idx], path[idx+1])]['weight']
+			seg['travel_time'] += weight - self.wait_time
 			assert seg['travel_time'] >= 0
 			idx -= 1
 		seg['start'] = path[idx]
@@ -64,7 +65,8 @@ class Path:
 								 'end' : edge[1]})
 			elif prev_line == (-1, -1):
 				assert line != (-1, -1)
-				seg = {'start' : edge[0], 'line' : line, 'travel_time' : travel_time}
+				seg = {'start' : edge[0], 'line' : line, 
+					   'travel_time' : travel_time}
 			else:
 				seg['travel_time'] += travel_time
 			prev_line = line
@@ -85,8 +87,10 @@ class Path:
 		return segments
 
 	def print_instructions(self, stops, trip_names):
+		print(50*'-')
+		print('The following is the pedestrian\'s' 
+			  ' directions to the optimal meeting location.\n')
 		for seg in self.segments[1:-1]:
-
 			start_stop_id = seg['start'][0]
 			start_stop_name = stops.loc[start_stop_id]['stop_name']
 			end_stop_id = seg['end'][0]
@@ -110,9 +114,11 @@ class Path:
 				for headsign in trip_headsigns:
 					print('\t' + headsign)
 			print('and ride until: \n\t' + end_stop_name)
-			print('should take: \n\t' + str(round(seg['travel_time']/60, 2)) 
-				  + ' mins\n')
-			print('That\'s a total of {} mins.'.format(round(self.travel_time/60)))
+			print('which should take: \n\t' 
+				  + str(round(seg['travel_time']/60, 2)) + ' mins\n')
+		# print('The pedestrian\'s trip to the meetup location will take a'
+		# 	  ' total of {} mins.'.format(round(self.travel_time/60)))
+		print('The meetup location is: ' + end_stop_name)
 
 	def plot_route(self, stops):
 		path = self.path[2:-2]
