@@ -1,5 +1,5 @@
 # mapping
-Graphs of and helpful algorithms involving Toronto Transit Commision (TTC) routes
+Finds the optimal meetup location for a pedestrian and driver that have differing starting locations but the same target location. Each run uses only a single call to the Google Maps API by also using Toronto Transit Commission (TTC) data. 
 
 ### Idea
 Imagine Jack and Jill have plans to go to Bill's house. Jack has a vehicle and Jill does not. Jack and Jill agree that Jill will take the TTC to a place where it is convenient for Jack to pick Jill up. **What is the optimal pickup location**? 
@@ -11,13 +11,10 @@ What if Jack is willing to go out of his way in order to save Jill time? What if
  - [x] Download TTC route information
  - [x] Create graph of TTC routes
  - [x] Create basic TTC navigation algorithm that tells users how to get from point A to point B
- - [x] Create optimal meetup location finder that assumes Jill is willing to walk 1 minute between stops and Jack will not go more than one minute out of his way
- - [ ] Introduce more parameters
- - [ ] Introduce time constraints based on TTC schedule. Prior to this it assumes that each bus/streetcar/subway arrives after a constant number of minutes, an unrealistic but greatly simplifying assumption. 
+ - [x] Create optimal meetup location finder that assumes Jack will not go more than one minute out of his way
 
 ### Notes
  - These algorithms will only work within range of the TTC
- - Before completion of the final task, the time that a TTC unit takes to pick up an individual at a stop is assumed to be constant
 
 ### Getting Started
 ```
@@ -30,8 +27,7 @@ The _setup.sh_ script downloads the data and creates a virtual environment.
 
 ### TODO
  - make google maps api key mandatory, write brief guide to securing one and storing it
- - add algorithm to find directions for driver and transit user to meet up while maintaining a low number of calls to the google maps api
- - add logic to the algorithm to allow user to add a weighting of how much to value the driver's vs the transit user's time, or minimize distance traveled by car
+ - add logic that covers the questions in the second paragraph of the **Idea** section.
 
 ### Figures
 ![](figures/Figure_1.png)
