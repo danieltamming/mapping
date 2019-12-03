@@ -2,5 +2,6 @@ env/
 keys*
 OpenData_TTC_Schedules/
 my_df*
-data/
+data/graph*
+data/my_df*
 notes.txt
