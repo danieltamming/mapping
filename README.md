@@ -24,7 +24,7 @@ cd mapping
 source setup.sh
 python main.py
 ```
-The _setup.sh_ script downloads the data, creates a virtual environment, and stores your API key. If you have issues with your API key, you can enter it manually input _keys.py_.
+The _setup.sh_ script downloads the data, creates a virtual environment, and stores your API key. If you have issues with your API key, you can enter it manually in _keys.py_.
 
 ### Next Steps
  - add logic that covers the questions in the second paragraph of the **Idea** section.
