@@ -1,5 +1,5 @@
 # mapping
-Finds the optimal meetup location for a pedestrian and driver that have differing starting locations but the same target location. By constructing a _networkx_ graph using Toronto Transit Commission (TTC) data, we only call the Google Maps API only once per use. 
+Finds the optimal meetup location for a pedestrian and driver that have differing starting locations but the same target location. By constructing a _networkx_ graph using Toronto Transit Commission (TTC) data, we call the Google Maps API only once per use. 
 
 ### Idea
 Imagine Jack and Jill have plans to go to Bill's house. Jack has a vehicle and Jill does not. Jack and Jill agree that Jill will take the TTC to a place where it is convenient for Jack to pick Jill up. **What is the optimal pickup location**? 
