@@ -40,11 +40,11 @@ def get_custom():
 		start_coord, start_drive, end_drive = get_user_input()
 		(start_address, end_address, polies, 
 			points) = get_gmaps_route(A=start_drive, B=end_drive, saving=True)
-		usr_input = input('Correct driver start? ' 
+		usr_input = input('Correct driver start? (Y/N)' 
 			+ start_address + '\n').lower()
 		if usr_input != 'y':
 			continue
-		usr_input = input('Correct driver end? ' 
+		usr_input = input('Correct driver end? (Y/N)' 
 			+ end_address + '\n').lower()
 		if usr_input != 'y':
 			continue

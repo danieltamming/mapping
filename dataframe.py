@@ -38,7 +38,8 @@ def get_closest_stops(my_df, coords, k=1):
 
 def get_stops_within(my_df, stop_id, max_dist):
 	stops = my_df[['stop_id', 'stop_lat', 'stop_lon']].drop_duplicates()
-	lat, lon = stops.loc[stops['stop_id'] == stop_id][['stop_lat', 'stop_lon']].iloc[0].values
+	lat, lon = stops.loc[
+		stops['stop_id'] == stop_id][['stop_lat', 'stop_lon']].iloc[0].values
 	order = cdist([[lat, lon]],
 					stops[['stop_lat', 'stop_lon']]).argsort()[0,:]
 	idxs = []

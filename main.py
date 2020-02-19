@@ -2,6 +2,7 @@ import os
 import time
 
 from tqdm import tqdm
+import numpy as np
 import matplotlib.pyplot as plt
 import networkx.algorithms.shortest_paths.weighted as algos
 
@@ -13,6 +14,31 @@ from path import Path
 from utils import get_travel_time, plot_temp, get_use_type
 
 WAIT_TIME = 7*60
+
+def get_calc_time(my_df, DG, stops):
+	# coordinates that form an approximate bounding box around Toronto
+	top = 43.716832
+	left = -79.543279
+	bottom = 43.665441
+	right = -79.331792
+	num_points = 5
+	lats = np.linspace(bottom, top, num=num_points)
+	lons = np.linspace(left, right, num=num_points)
+	count = 0
+	start_time = time.time()
+	for i in range(len(lats)-1):
+		for j in range(len(lons)-1):
+			for k in range(i+1, len(lats)):
+				for l in range(j+1, len(lons)):
+					A = (lats[i], lons[j])
+					B = (lats[k], lons[l])
+					get_best_route(DG, my_df, stops, A, B, 8)
+					get_best_route(DG, my_df, stops, B, A, 8)
+					count += 2
+	delta_time = time.time() - start_time
+	print(count)
+	print(round(delta_time, 2))
+	print(round(delta_time/count, 2))
 
 def get_best_route(DG, my_df, stops, start_coord, end_coord, num_stops):
 	'''
@@ -48,7 +74,8 @@ if __name__ == "__main__":
 	stops = get_stops()
 	trip_names = get_trip_names()
 	DG = get_graph(my_df, saving=True)
-
 	polies, start_coord = get_use_type()
 	drive_coords = polies[::20]
 	get_meeting_directions(DG, my_df, stops, start_coord, drive_coords)
+	
+	# get_calc_time(my_df, DG, stops)
