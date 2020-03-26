@@ -118,7 +118,12 @@ class Path:
 				  + str(round(seg['travel_time']/60, 2)) + ' mins\n')
 		# print('The pedestrian\'s trip to the meetup location will take a'
 		# 	  ' total of {} mins.'.format(round(self.travel_time/60)))
-		print('The meetup location is: ' + end_stop_name)
+		print(50*'-')
+		print('The optimal meetup location is: ' + end_stop_name)
+		print(50*'-')
+		print('Note that the meetup location is highly accurate but the'
+			  ' recommended path to that location may be suboptimal due to'
+			  ' real-time changes in traffic patterns and transit times.')
 
 	def plot_route(self, stops):
 		path = self.path[2:-2]

@@ -21,6 +21,8 @@ def get_user_input():
 	lat = input('Enter pedestrian latitude coordinate: ')
 	lon = input('Enter pedestrian longitude coordinate: ')
 	start_coord = (lat, lon)
+	print('\nDriver locations may be entered in any format acceptable'
+		  ' by Google Maps (e.g. Pearson Airport).')
 	start_drive = input('Enter driver starting location: ')
 	end_drive = input('Enter ending location: ')
 	return (lat, lon), start_drive, end_drive
@@ -40,13 +42,15 @@ def get_custom():
 		start_coord, start_drive, end_drive = get_user_input()
 		(start_address, end_address, polies, 
 			points) = get_gmaps_route(A=start_drive, B=end_drive, saving=True)
-		usr_input = input('Correct driver start? (Y/N)' 
+		usr_input = input('Correct driver start? (Y/N) ' 
 			+ start_address + '\n').lower()
 		if usr_input != 'y':
+			print('\nRestarting input process.')
 			continue
-		usr_input = input('Correct driver end? (Y/N)' 
+		usr_input = input('Correct driver end? (Y/N) ' 
 			+ end_address + '\n').lower()
 		if usr_input != 'y':
+			print('\nRestarting input process.')
 			continue
 		approved = True
 	return polies, start_coord
