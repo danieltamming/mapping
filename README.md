@@ -11,7 +11,7 @@ What if Jack is willing to go out of his way in order to save Jill time? What if
  - [x] Use API key to generate coordinates of the optimal driving path from point A to point B
  - [x] Download TTC route information
  - [x] Create graph of TTC routes
- - [x] Create basic TTC navigation algorithm that tells users how to get from point A to point B
+ - [x] Create TTC navigation algorithm that tells users how to get from point A to point B
  - [x] Create algorithm that finds the meetup point along Jack's path that minimizes Jill's travel time
  - [ ] Add logic that solves the problems posed in the second paragraph of the **Idea** section
 
