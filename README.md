@@ -28,7 +28,7 @@ python main.py
 ```
 The _setup.sh_ script downloads the data, creates a virtual environment, and stores your API key. If you have issues with your API key, you can enter it manually in _keys.py_. 
 
-The _main.py_ begins by constructing the TTC graph, if it has not yet been created. It is saved to memory for future use. It then opens a command line interface that allows the user to either see a predefined example, or input a 
+The _main.py_ begins by constructing the TTC graph if it has not yet been created. It is saved to memory for future use. It then opens a command line interface that allows the user to either see a predefined example, or input a 
 
 ### Assumptions
 1. People walk at a pace of 5 kilometers per hour. This pace is [widely accepted](https://www.researchgate.net/publication/5561162_Brisk_Walking_Speed_in_Older_Adults_Who_Walk_for_Exercise) to be fairly accurate.
