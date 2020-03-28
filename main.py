@@ -15,36 +15,11 @@ from utils import get_travel_time, plot_temp, get_use_type
 
 WAIT_TIME = 7*60
 
-def get_calc_time(my_df, DG, stops):
-	# coordinates that form an approximate bounding box around Toronto
-	top = 43.716832
-	left = -79.543279
-	bottom = 43.665441
-	right = -79.331792
-	num_points = 5
-	lats = np.linspace(bottom, top, num=num_points)
-	lons = np.linspace(left, right, num=num_points)
-	count = 0
-	start_time = time.time()
-	for i in range(len(lats)-1):
-		for j in range(len(lons)-1):
-			for k in range(i+1, len(lats)):
-				for l in range(j+1, len(lons)):
-					A = (lats[i], lons[j])
-					B = (lats[k], lons[l])
-					get_best_route(DG, my_df, stops, A, B, 8)
-					get_best_route(DG, my_df, stops, B, A, 8)
-					count += 2
-	delta_time = time.time() - start_time
-	print(count)
-	print(round(delta_time, 2))
-	print(round(delta_time/count, 2))
-
 def get_best_route(DG, my_df, stops, start_coord, end_coord, num_stops):
 	'''
-	New approach: add 0 weight directed edge to all A nodes,
-				  and 0 weight directed edge from all B nodes
-				  then remove them when done
+	Find optimal commuter path between start_coord and end_coord.
+	Considers beginning travel at a num_stops number of transit 
+	stops that are closest to the starting coordinate. 
 	'''
 	start_stop_ids = get_closest_stops(my_df, start_coord, num_stops)
 	end_stop_ids = get_closest_stops(my_df, end_coord, num_stops)
@@ -59,6 +34,11 @@ def get_best_route(DG, my_df, stops, start_coord, end_coord, num_stops):
 	return path
 
 def get_meeting_directions(DG, my_df, stops, start_coord, drive_coords):
+	'''
+	Given the drive_coord list of possible coordinates at which to meet
+	the driver, finds the coordinate that is the fastest to get to,
+	and the instructions fro how to get to it.
+	'''
 	print(50*'-')
 	print('Finding optimal meeting location.')
 	best_time = float('inf')
@@ -69,13 +49,19 @@ def get_meeting_directions(DG, my_df, stops, start_coord, drive_coords):
 			best_path = path
 	best_path.print_instructions(stops, trip_names)
 
-if __name__ == "__main__":
+def get_all_data():
+	'''
+	Retrieves (or creates, if necessary) the three dataframes 
+	and one graph that are essential to all computations
+	'''
 	my_df = get_df(saving=True)
 	stops = get_stops()
 	trip_names = get_trip_names()
 	DG = get_graph(my_df, saving=True)
+	return my_df, stops, trip_names, DG
+
+
+if __name__ == "__main__":
+	my_df, stops, trip_names, DG = get_all_data()
 	polies, start_coord = get_use_type()
-	drive_coords = polies[::20]
-	get_meeting_directions(DG, my_df, stops, start_coord, drive_coords)
-	
-	# get_calc_time(my_df, DG, stops)
+	get_meeting_directions(DG, my_df, stops, start_coord, polies[::20])

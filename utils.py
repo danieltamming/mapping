@@ -65,3 +65,33 @@ def get_use_type():
 		return get_example()
 	else:
 		return get_custom()
+
+def get_calc_time(my_df, DG, stops):
+	'''
+	Used in computation time testing. Calculates the average 
+	time it takes to find optimal routes between various points
+	'''
+
+	# coordinates that form an approximate bounding box around Toronto
+	top = 43.716832
+	left = -79.543279
+	bottom = 43.665441
+	right = -79.331792
+	num_points = 5
+	lats = np.linspace(bottom, top, num=num_points)
+	lons = np.linspace(left, right, num=num_points)
+	count = 0
+	start_time = time.time()
+	for i in range(len(lats)-1):
+		for j in range(len(lons)-1):
+			for k in range(i+1, len(lats)):
+				for l in range(j+1, len(lons)):
+					A = (lats[i], lons[j])
+					B = (lats[k], lons[l])
+					get_best_route(DG, my_df, stops, A, B, 8)
+					get_best_route(DG, my_df, stops, B, A, 8)
+					count += 2
+	delta_time = time.time() - start_time
+	print(count)
+	print(round(delta_time, 2))
+	print(round(delta_time/count, 2))
