@@ -5,3 +5,4 @@ my_df*
 data/graph*
 data/my_df*
 notes.txt
+__pycache__/
