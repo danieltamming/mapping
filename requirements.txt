@@ -8,12 +8,16 @@ cycler==0.10.0
 decorator==4.4.1
 descartes==1.1.0
 Fiona==1.8.11
+Flask==1.1.2
 geographiclib==1.50
 geopandas==0.6.2
 geopy==1.20.0
 googlemaps==3.1.4
 idna==2.8
+itsdangerous==1.1.0
+Jinja2==2.11.2
 kiwisolver==1.1.0
+MarkupSafe==1.1.1
 matplotlib==3.1.2
 munch==2.5.0
 networkx==2.4
@@ -32,3 +36,4 @@ Shapely==1.6.4.post2
 six==1.13.0
 tqdm==4.39.0
 urllib3==1.25.7
+Werkzeug==1.0.1

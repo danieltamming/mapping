@@ -1,6 +1,44 @@
 import geopy.distance
+import networkx.algorithms.shortest_paths.weighted as algos
 
-from gmaps import get_gmaps_route
+from gmaps import get_gmaps_route, get_gmaps_coords
+from graphing import (get_graph, show_graph, 
+					  add_temp_stops, remove_temp_stops)
+from dataframe import (get_df, get_stops, get_trip_names, 
+					   get_stops_within, get_closest_stops)
+from path import Path
+
+
+def get_best_route(DG, my_df, stops, start_coord, end_coord, num_stops):
+	'''
+	Find optimal commuter path between start_coord and end_coord.
+	Considers beginning travel at a num_stops number of transit 
+	stops that are closest to the starting coordinate. 
+	'''
+	WAIT_TIME = 7*60
+
+	start_stop_ids = get_closest_stops(my_df, start_coord, num_stops)
+	end_stop_ids = get_closest_stops(my_df, end_coord, num_stops)
+	to_remove = add_temp_stops(DG, stops, start_stop_ids, end_stop_ids,
+							   start_coord, end_coord)
+	result = algos.dijkstra_path(DG, 'temp start', 
+								'temp end', weight='weight')
+	assert (isinstance(result[0], str) and isinstance(result[-1], str)
+			and result[1][1] == -1 and result[-2][1] == -1)
+	path = Path(DG, result, WAIT_TIME)
+	remove_temp_stops(DG, to_remove)
+	return path
+
+def get_all_data():
+	'''
+	Retrieves (or creates, if necessary) the three dataframes 
+	and one graph that are essential to all computations
+	'''
+	my_df = get_df(saving=True)
+	stops = get_stops()
+	trip_names = get_trip_names()
+	DG = get_graph(my_df, saving=True)
+	return my_df, stops, trip_names, DG
 
 def get_travel_time(p1, p2, km_per_min=5/60):
 	'''
@@ -18,14 +56,16 @@ def plot_temp(polies):
 	plt.show()
 
 def get_user_input():
-	lat = input('Enter pedestrian latitude coordinate: ')
-	lon = input('Enter pedestrian longitude coordinate: ')
-	start_coord = (lat, lon)
-	print('\nDriver locations may be entered in any format acceptable'
-		  ' by Google Maps (e.g. Pearson Airport).')
+	# lat = input('Enter pedestrian latitude coordinate: ')
+	# lon = input('Enter pedestrian longitude coordinate: ')
+	# start_coord = (lat, lon)
+	# print('\nDriver locations may be entered in any format acceptable'
+	# 	  ' by Google Maps (e.g. Pearson Airport).')
+	# return (lat, lon), start_drive, end_drive
+	start_pedestrian = input('Enter pedestrian starting location: ')
 	start_drive = input('Enter driver starting location: ')
 	end_drive = input('Enter ending location: ')
-	return (lat, lon), start_drive, end_drive
+	return start_pedestrian, start_drive, end_drive
 
 def get_example():
 	start_coord = (43.655900, -79.492757)
@@ -39,7 +79,13 @@ def get_example():
 def get_custom():
 	approved = False
 	while not approved:
-		start_coord, start_drive, end_drive = get_user_input()
+		start_pedestrian, start_drive, end_drive = get_user_input()
+		start_coord, start_address = get_gmaps_coords(start_pedestrian)
+		usr_input = input('Correct pedestrian start? (Y/N) '
+			+ start_address + '\n').lower()
+		if usr_input != 'y':
+			print('\nRestarting input process.')
+			continue
 		(start_address, end_address, polies, 
 			points) = get_gmaps_route(A=start_drive, B=end_drive, saving=True)
 		usr_input = input('Correct driver start? (Y/N) ' 
@@ -95,3 +141,13 @@ def get_calc_time(my_df, DG, stops):
 	print(count)
 	print(round(delta_time, 2))
 	print(round(delta_time/count, 2))
+
+def get_points():
+	usr_input = input('Enter pedestrian starting location,'
+					  ' driver starting location, '
+					  'driving ending location: ')
+	start_pedestrian, start_drive, end_drive = usr_input.split('. ')
+	start_coord, start_address = get_gmaps_coords(start_pedestrian)
+	(start_address, end_address, polies, 
+		points) = get_gmaps_route(A=start_drive, B=end_drive, saving=True)
+	return polies, start_coord

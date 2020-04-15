@@ -86,6 +86,12 @@ class Path:
 			segments.append(end_walk_seg)
 		return segments
 
+	def get_meetup_location(self, stops, trip_names):
+		seg = self.segments[-2]
+		end_stop_id = seg['end'][0]
+		stop_name = stops.loc[end_stop_id]['stop_name']
+		return ' '.join([word.capitalize() for word in stop_name.split()])
+
 	def print_instructions(self, stops, trip_names):
 		print(50*'-')
 		print('The following is the pedestrian\'s' 

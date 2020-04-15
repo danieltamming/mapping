@@ -15,6 +15,8 @@ def get_gmaps_route(A=None, B=None, saving=False, example=False):
 		from keys import API_KEY
 		gmaps = googlemaps.Client(key=API_KEY)
 		result = gmaps.directions(A, B, mode='driving', units='metric')
+		if not result:
+			return (-1, -1, -1, -1)
 
 	if saving:
 		pickle.dump(result, open(temp_file, 'wb'))
@@ -32,3 +34,16 @@ def get_gmaps_route(A=None, B=None, saving=False, example=False):
 	start_address = legs[0]['start_address']
 	end_address = legs[-1]['end_address']
 	return start_address, end_address, polies, points
+
+def get_gmaps_coords(location_str):
+	from keys import API_KEY
+	gmaps = googlemaps.Client(key=API_KEY)
+	query = gmaps.geocode(location_str)
+	location = query[0]['geometry']['location']
+	address = query[0]['formatted_address']
+	return (location['lat'], location['lng']), address
+
+
+if __name__ == "__main__":
+	location, address = get_gmaps_coords('scotiabank arena, Toronto')
+	print(location, address)
